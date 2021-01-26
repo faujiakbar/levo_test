@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  db:
+    image: postgres:12
+    environment:
+        - POSTGRES_DB=test
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: php_npm_pgsql:7.4
+    ports:
+      - "0.0.0.0:81:80"
+    volumes:
+      - ./:/app
+      - ./conf/default:/etc/nginx/sites-available/default
+      - ./conf/www.conf:/opt/bitnami/php/etc/php-fpm.d/www.conf
+    depends_on:
+      - db
+    command: ['./conf/run.sh']
